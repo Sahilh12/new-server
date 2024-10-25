@@ -26,7 +26,7 @@ const multer = require('./utils/multer.js')
 
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://chimerical-raindrop-f38302.netlify.app',
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     credentials: true
 }))
