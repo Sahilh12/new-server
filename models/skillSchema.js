@@ -15,17 +15,7 @@ const skillSchema = mongoose.Schema({
         type: Number,
         required:[true , "Proficiency is required"],
         trim:true
-    },
-    svg: {
-        public_id: {
-            type: String,
-            required: true,
-        },
-        url: {
-            type: String,
-            required: true,
-        },
-    },
+    }, 
 });
 
 module.exports = mongoose.model("Skill", skillSchema); 

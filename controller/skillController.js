@@ -1,28 +1,15 @@
-const express = require('express')
-
 const skillModel = require('../models/skillSchema')
-const { catchAsyncError } = require('../middlewares/catchAsyncError')
-const { v2 } = require('cloudinary')
+const { catchAsyncError } = require('../middlewares/catchAsyncError') 
 const { ErrorHandler } = require('../middlewares/error')
 
 module.exports.addSkill = catchAsyncError(async (req, res, next) => {
     const { title, proficiency } = req.body
-    if (!req.files || Object.values(req.files) <= 0) {
-        return next(new ErrorHandler("SVG file is Required! ", 400))
-    }
-    const { svg } = req.files
-    const cloudinaryResponse = await v2.uploader.upload(
-        svg.tempFilePath,
-        { folder: "SKILL IMAGE" }
-    )
+     
+ 
     const skill = await skillModel.create({
         userId: req.user,
         title,
-        proficiency,
-        svg: {
-            public_id: cloudinaryResponse.public_id,
-            url: cloudinaryResponse.secure_url
-        }
+        proficiency, 
     })
     res.status(201).json({ message: 'Skill added successfully', skill })
 

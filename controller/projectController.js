@@ -1,9 +1,14 @@
+const path = require('path')
 const { catchAsyncError } = require('../middlewares/catchAsyncError.js')
 const { ErrorHandler } = require('../middlewares/error.js')
 const projectModel = require('../models/projectSchema.js')
+const fs = require('fs')
 
 
-module.exports.addProject = catchAsyncError(async (req, res, next) => { 
+
+module.exports.addProject = catchAsyncError(async (req, res, next) => {
+
+    const filePath = req.files.map((file) => file.path)
 
     try {
         const { title,
@@ -23,14 +28,6 @@ module.exports.addProject = catchAsyncError(async (req, res, next) => {
         }
 
 
-        // const cloudinaryResponse = await v2.uploader.upload(
-        //     projectBanner.tempFilePath,
-        //     { folder: "PORTFOLIO PROJECT IMAGES" }
-        // )
-        // if (!cloudinaryResponse || cloudinaryResponse.error) {
-        //     return next(new ErrorHandler("Please upload banner image", 400))
-        // }
-
         const project = await projectModel.create({
             userId: req.user,
             title,
@@ -41,8 +38,7 @@ module.exports.addProject = catchAsyncError(async (req, res, next) => {
             stack,
             deployed,
             // projectBanner: projectBanner.path,
-            projectBanner: req.files
-
+            projectBanner: filePath
         })
         res.status(200).json({
             success: true,
@@ -54,9 +50,21 @@ module.exports.addProject = catchAsyncError(async (req, res, next) => {
     }
 })
 
-module.exports.updateProject = catchAsyncError(async (req, res, next) => {
-    if (!req.files || req.files.length === 0) {
-        return next(new ErrorHandler("Project Banner is Required! ", 400))
+module.exports.updateProject = catchAsyncError(async (req, res, next) => { 
+
+    const filePath = req.files.map((file) => file.path) 
+    console.log(filePath);
+    
+    const project = await projectModel.findById(req.params.id)  
+
+    if (req.files.length > 0) {
+        project.projectBanner.forEach((singlePath, i) => {
+            const oldImagePath = path.join(`D:/Portfolio/MERN/New folder/New folder/server/${singlePath}`)
+            if (fs.existsSync(oldImagePath)) {
+                fs.unlinkSync(oldImagePath)
+                console.log('old project image deleted');
+            }
+        })
     }
 
     const newData = {
@@ -67,28 +75,9 @@ module.exports.updateProject = catchAsyncError(async (req, res, next) => {
         technologies: req.body.technologies,
         stack: req.body.stack,
         deployed: req.body.deployed,
-        projectBanner: req.files
+        projectBanner: filePath.length > 0 ? filePath : project.projectBanner
     }
 
-
-    // const projectPublicId = project.projectBanner.public_id
-    // const cloudinaryResponse = await v2.uploader.destroy(projectPublicId)
-    // if (!cloudinaryResponse || cloudinaryResponse.error) {
-    //     return next(new ErrorHandler("Failed to delete banner image", 400))
-    // }
-
-    // const { projectBanner } = req.files
-    // const cloudinaryNewResponse = await v2.uploader.upload(
-    //     projectBanner.tempFilePath,
-    //     { folder: "PORTFOLIO PROJECT IMAGES" }
-    // )
-    // if (!cloudinaryNewResponse || cloudinaryNewResponse.error) {
-    //     return next(new ErrorHandler("Failed to upload banner image", 400))
-    // }
-    // newData.projectBanner = {
-    //     public_id: cloudinaryNewResponse.public_id,
-    //     url: cloudinaryNewResponse.secure_url
-    // }
     const updatedProject = await projectModel.findByIdAndUpdate(req.params.id, newData, {
         new: true,
         runValidators: true

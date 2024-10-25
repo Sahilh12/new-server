@@ -1,6 +1,5 @@
 const { catchAsyncError } = require("../middlewares/catchAsyncError");
 const { ErrorHandler } = require("../middlewares/error");
-const { v2 } = require('cloudinary')
 const { jwtToken } = require('../utils/jwtToken.js')
 const { sendEmail } = require("../utils/sendEmail.js");
 const crypto = require('crypto')
@@ -10,30 +9,28 @@ const projectModel = require('../models/projectSchema.js')
 const skillModel = require('../models/skillSchema.js')
 const applicationModel = require('../models/softwareApplicationSchema.js')
 const timelineModel = require('../models/timelineSchema.js');
+const path = require('path')
+const fs = require('fs')
 
 
-module.exports.register = catchAsyncError(async (req, res, next) => { 
 
-    if (!req.files || Object.values(req.files).length <= 1) {
+
+module.exports.register = catchAsyncError(async (req, res, next) => {
+
+    if (!req.files) {
         return next(new ErrorHandler("Avtar and Resume are Required! ", 400))
     }
-    const { avtar, resume } = req.files 
+    const avatarFile = req.files['avtar'] ? req.files['avtar'][0].path : null;
 
-    const cloudinaryResponseForAvtar = await v2.uploader.upload(
-        avtar.tempFilePath,
-        { folder: "AVTARS" }
-    )
+    const resumeFile = req.files['resume'] ? req.files['resume'][0].path : null;
 
-    const cloudinaryResponseForResume = await v2.uploader.upload(
-        resume.tempFilePath,
-        { folder: "MY_RESUME" }
-    )
 
     const {
         fullName,
         email,
         phone,
-        password, } = req.body
+        password,
+        githubUrl } = req.body
 
     const existingUser = await userModel.findOne({ email })
     if (existingUser) {
@@ -46,16 +43,10 @@ module.exports.register = catchAsyncError(async (req, res, next) => {
         email,
         phone,
         password,
-        avtar: {
-            public_id: cloudinaryResponseForAvtar.public_id,
-            url: cloudinaryResponseForAvtar.secure_url
-        },
-        resume: {
-            public_id: cloudinaryResponseForResume.public_id,
-            url: cloudinaryResponseForResume.secure_url
-        }
+        githubUrl,
+        avtar: avatarFile,
+        resume: resumeFile
     })
-
 
     jwtToken(user, "User Registered", 201, res)
 
@@ -85,6 +76,30 @@ module.exports.login = catchAsyncError(async (req, res, next) => {
 
 module.exports.updateUser = catchAsyncError(async (req, res, next) => {
 
+    const loggedInUser = await userModel.findById(req.user)
+
+    if (req.files['avtar']) {
+        if (loggedInUser.avtar) {
+            const oldImagePath = path.join(`D:/Portfolio/MERN/New folder/New folder/server/${loggedInUser.avtar}`);
+
+            if (fs.existsSync(oldImagePath)) {
+                fs.unlinkSync(oldImagePath);
+                console.log('avtar deleted : ', oldImagePath);
+            }
+        }
+    }
+    if (req.files['resume']) {
+        if (loggedInUser.resume) {
+            const oldImagePath = path.join(`D:/Portfolio/MERN/New folder/New folder/server/${loggedInUser.resume}`);
+
+            if (fs.existsSync(oldImagePath)) {
+                fs.unlinkSync(oldImagePath);
+                console.log('resume deleted : ', oldImagePath);
+            }
+        }
+    }
+
+
     const newData = {
         fullName: req.body.fullName,
         email: req.body.email,
@@ -94,37 +109,9 @@ module.exports.updateUser = catchAsyncError(async (req, res, next) => {
         githubUrl: req.body.githubUrl,
         instagramUrl: req.body.instagramUrl,
         twitterUrl: req.body.twitterUrl,
-        linkedInUrl: req.body.linkedInUrl
-    }
-
-    if (req.files && req.files.avtar) {
-        const { avtar } = req.files
-        const user = await userModel.findById(req.user)
-        const profileImageId = user.avtar.public_id
-        await v2.uploader.destroy(profileImageId)
-        const cloudinaryResponseForAvtar = await v2.uploader.upload(
-            avtar.tempFilePath,
-            { folder: "AVTARS" }
-        )
-
-        newData.avtar = {
-            public_id: cloudinaryResponseForAvtar.public_id,
-            url: cloudinaryResponseForAvtar.secure_url
-        }
-    }
-    if (req.files && req.files.resume) {
-        const { resume } = req.files
-        const user = await userModel.findById(req.user)
-        const ResumeImageId = user.resume.public_id
-        await v2.uploader.destroy(ResumeImageId)
-        const cloudinaryResponseForResume = await v2.uploader.upload(
-            resume.tempFilePath,
-            { folder: "MY_RESUME" }
-        )
-        newData.resume = {
-            public_id: cloudinaryResponseForResume.public_id,
-            url: cloudinaryResponseForResume.secure_url
-        }
+        linkedInUrl: req.body.linkedInUrl,
+        avtar: req.files['avtar'] && req.files['avtar'][0].path,
+        resume: req.files['resume'] && req.files['resume'][0].path
     }
 
     const user = await userModel.findOneAndUpdate({ _id: req.user }, newData)
@@ -196,7 +183,7 @@ module.exports.logOut = catchAsyncError(async (req, res, next) => {
     res.status(200).send("User Logged Out")
 })
 
-module.exports.getUserForPortfolio = catchAsyncError(async (req, res, next) => { 
+module.exports.getUserForPortfolio = catchAsyncError(async (req, res, next) => {
 
     const user = await userModel.findById({ _id: req.params.id })
     if (!user) {
@@ -214,7 +201,7 @@ module.exports.forgotPassword = catchAsyncError(async (req, res, next) => {
     }
     const resetToken = await user.getResetToken()
     await user.save({ validateBeforeSave: false })
-    const resetUrl = `https://chimerical-raindrop-f38302.netlify.app/resetPassword/${resetToken}`
+    const resetUrl = `http://localhost:5173/resetPassword/${resetToken}`
     const message = `Your password reset link is :- \n\n ${resetUrl} \n\n if you've not request for this , ignore it.`
 
     try {

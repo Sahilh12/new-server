@@ -28,12 +28,12 @@ const userSchema = mongoose.Schema({
         select: false
     },
     avtar: {
-        public_id: String,
-        url: String
+        type: String,
+        required: [true, "Avatar Required!"],
     },
     resume: { 
-        public_id: String,
-        url: String,
+        type: String,
+        required: [true, "Resume Required!"],
     },
     portfolioUrl: String,
     githubUrl: {

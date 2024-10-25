@@ -11,14 +11,8 @@ const softwareApplicationSchema = new mongoose.Schema({
     required: [true, "Application name is required"]
   },
   svg: {
-    public_id: {
-      type: String,
-      required: true,
-    },
-    url: {
-      type: String,
-      required: true,
-    },
+    type: String,
+    required: [true, "Application icon is required"]
   },
 });
 
