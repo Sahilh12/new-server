@@ -55,6 +55,10 @@ module.exports.updateProject = catchAsyncError(async (req, res, next) => {
 
     const project = await projectModel.findById(req.params.id)
 
+    if (project.projectBanner.length <= 0) {
+        return next(new ErrorHandler("Project Banner is Required! ", 400))
+    }
+
     if (req.files.length > 0) {
         project.projectBanner.forEach((singlePath, i) => {
             const oldImagePath = path.join(`D:/Portfolio/MERN/New folder/New folder/server/${singlePath}`)
