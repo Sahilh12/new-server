@@ -6,17 +6,20 @@ const crypto = require('crypto')
 const userSchema = mongoose.Schema({
     fullName: {
         type: String,
-        required: [true, "Name Required!"]
+        required: [true, "Name Required!"],
+        trim: true
     },
     email: {
         type: String,
         required: [true, "Email Required!"],
         unique: [true, "Already have an account with this email"],
+        trim: true
 
     },
     phone: {
         type: Number,
-        required: [true, "Phone number Required!"]
+        required: [true, "Phone number Required!"],
+        trim: true
     },
     aboutMe: {
         type: String,
@@ -25,20 +28,22 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, "Password Required!"],
         minLength: [8, "Password must contain at least 8 characters!"],
-        select: false
+        select: false,
+        trim: true
     },
     avtar: {
         type: String,
         required: [true, "Avatar Required!"],
     },
-    resume: { 
+    resume: {
         type: String,
         required: [true, "Resume Required!"],
     },
     portfolioUrl: String,
     githubUrl: {
-        type : String,
-        required:  [true , "Github URL Required"],
+        type: String,
+        required: [true, "Github URL Required"],
+        trim: true
     },
     instagramUrl: String,
     facebookUrl: String,

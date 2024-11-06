@@ -36,10 +36,7 @@ module.exports.getApplication = catchAsyncError(async (req, res, next) => {
 module.exports.updateApplication = catchAsyncError(async (req, res, next) => {
     const newData = {
         name: req.body.name,
-        svg: req.file.path
-    }
-    if (!req.file) {
-        return next(new ErrorHandler('Please upload a file', 400))
+        svg: req.file && req.file.path
     }
 
     const application = await softwareApplicationModel.findById(req.params.id)

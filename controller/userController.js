@@ -81,7 +81,6 @@ module.exports.updateUser = catchAsyncError(async (req, res, next) => {
     if (req.files['avtar']) {
         if (loggedInUser.avtar) {
             const oldImagePath = path.join(`D:/Portfolio/MERN/New folder/New folder/server/${loggedInUser.avtar}`);
-
             if (fs.existsSync(oldImagePath)) {
                 fs.unlinkSync(oldImagePath);
                 console.log('avtar deleted : ', oldImagePath);
@@ -91,7 +90,6 @@ module.exports.updateUser = catchAsyncError(async (req, res, next) => {
     if (req.files['resume']) {
         if (loggedInUser.resume) {
             const oldImagePath = path.join(`D:/Portfolio/MERN/New folder/New folder/server/${loggedInUser.resume}`);
-
             if (fs.existsSync(oldImagePath)) {
                 fs.unlinkSync(oldImagePath);
                 console.log('resume deleted : ', oldImagePath);
@@ -101,15 +99,15 @@ module.exports.updateUser = catchAsyncError(async (req, res, next) => {
 
 
     const newData = {
-        fullName: req.body.fullName,
-        email: req.body.email,
-        phone: req.body.phone,
-        aboutMe: req.body.aboutMe,
-        portfolioUrl: req.body.portfolioUrl,
-        githubUrl: req.body.githubUrl,
-        instagramUrl: req.body.instagramUrl,
-        twitterUrl: req.body.twitterUrl,
-        linkedInUrl: req.body.linkedInUrl,
+        fullName: req.body.fullName && req.body.fullName,
+        email: req.body.email && req.body.email,
+        phone: req.body.phone && req.body.phone,
+        aboutMe: req.body.aboutMe && req.body.aboutMe,
+        portfolioUrl: req.body.portfolioUrl && req.body.portfolioUrl,
+        githubUrl: req.body.githubUrl && req.body.githubUrl,
+        instagramUrl: req.body.instagramUrl && req.body.instagramUrl,
+        twitterUrl: req.body.twitterUrl && req.body.twitterUrl,
+        linkedInUrl: req.body.linkedInUrl && req.body.linkedInUrl,
         avtar: req.files['avtar'] && req.files['avtar'][0].path,
         resume: req.files['resume'] && req.files['resume'][0].path
     }
@@ -123,22 +121,30 @@ module.exports.updateUser = catchAsyncError(async (req, res, next) => {
 
 })
 
+module.exports.getAdminUserData = catchAsyncError(async (req, res, next) => {
+    const messages = await messageModel.find({ receiverId: req.user })
+    const projects = await projectModel.find({ userId: req.user })
+    const skills = await skillModel.find({ userId: req.user })
+    const applications = await applicationModel.find({ userId: req.user })
+    const timelines = await timelineModel.find({ userId: req.user })
+
+    res.status(200).json({
+        success: true,
+        messages,
+        projects,
+        skills,
+        applications,
+        timelines
+    })
+})
+
 module.exports.getUser = catchAsyncError(async (req, res, next) => {
     const user = await userModel.find({ _id: req.user })
-    const message = await messageModel.find({ receiverId: req.user })
-    const project = await projectModel.find({ userId: req.user })
-    const skill = await skillModel.find({ userId: req.user })
-    const application = await applicationModel.find({ userId: req.user })
-    const timeline = await timelineModel.find({ userId: req.user })
+
 
     res.status(200).json({
         success: true,
         user,
-        message,
-        project,
-        skill,
-        application,
-        timeline
     })
 })
 
@@ -201,7 +207,7 @@ module.exports.forgotPassword = catchAsyncError(async (req, res, next) => {
     }
     const resetToken = await user.getResetToken()
     await user.save({ validateBeforeSave: false })
-    const resetUrl = `https://symphonious-zuccutto-879a8a.netlify.app/resetPassword/${resetToken}`
+    const resetUrl = `https://rainbow-torte-934876.netlify.app/resetPassword/${resetToken}`
     const message = `Your password reset link is :- \n\n ${resetUrl} \n\n if you've not request for this , ignore it.`
 
     try {

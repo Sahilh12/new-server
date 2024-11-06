@@ -26,7 +26,7 @@ const multer = require('./utils/multer.js')
 
 
 app.use(cors({
-    origin: 'https://symphonious-zuccutto-879a8a.netlify.app',
+    origin: 'https://rainbow-torte-934876.netlify.app',
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     credentials: true
 }))

@@ -13,39 +13,39 @@ const projectSchema = new mongoose.Schema({
   title: {
     type: String,
     trim: true,
-    required: [true, "Please enter a title."],
+    required: true,
   },
   description: {
     type: String,
     trim: true,
-    required: [true, "Please enter a description."],
+    required: true,
   },
   gitRepoLink: {
     type: String,
     trim: true,
-    required: [true, "Please enter a Git repository link."],
+    required: true,
   },
   projectLink: {
     type: String,
     trim: true,
-    required: [true, "Please enter a project link."],
+    required: true,
   },
   technologies: {
     type: String,
     trim: true,
-    required: [true, "Please enter the technologies used."],
+    required: true,
   },
   stack: {
     type: String,
     trim: true,
-    required: [true, "Please enter the project stack."],
+    required: true,
   },
   deployed: {
     type: String,
     trim: true,
-    required: [true, "Please specify if the project is deployed."],
+    required: true,
   },
-  projectBanner: [] // Store an array of objects
+  projectBanner: []
 });
 
 

@@ -19,7 +19,6 @@ module.exports.addProject = catchAsyncError(async (req, res, next) => {
             stack,
             deployed } = req.body
 
-
         if (!title || !description || !gitRepoLink || !projectLink || !technologies || !stack || !deployed) {
             return next(new ErrorHandler("Please fill full form ", 400))
         }
@@ -37,7 +36,6 @@ module.exports.addProject = catchAsyncError(async (req, res, next) => {
             technologies,
             stack,
             deployed,
-            // projectBanner: projectBanner.path,
             projectBanner: filePath
         })
         res.status(200).json({
@@ -46,16 +44,16 @@ module.exports.addProject = catchAsyncError(async (req, res, next) => {
             project
         })
     } catch (error) {
-        console.log('failed to upload', error);
+        return next(new ErrorHandler("Please fill full form ", 400))
     }
 })
 
-module.exports.updateProject = catchAsyncError(async (req, res, next) => { 
+module.exports.updateProject = catchAsyncError(async (req, res, next) => {
 
-    const filePath = req.files.map((file) => file.path) 
-    console.log(filePath);
-    
-    const project = await projectModel.findById(req.params.id)  
+    const filePath = req.files.map((file) => file.path)
+    // console.log(filePath);
+
+    const project = await projectModel.findById(req.params.id)
 
     if (req.files.length > 0) {
         project.projectBanner.forEach((singlePath, i) => {
@@ -75,7 +73,7 @@ module.exports.updateProject = catchAsyncError(async (req, res, next) => {
         technologies: req.body.technologies,
         stack: req.body.stack,
         deployed: req.body.deployed,
-        projectBanner: filePath.length > 0 ? filePath : project.projectBanner
+        projectBanner: filePath.length > 0 ? filePath : req.body.projectBanner
     }
 
     const updatedProject = await projectModel.findByIdAndUpdate(req.params.id, newData, {
@@ -97,13 +95,15 @@ module.exports.getAllProjects = catchAsyncError(async (req, res, next) => {
         allProjects
     })
 })
-module.exports.getProjects = catchAsyncError(async (req, res, next) => {
-    const allProjects = await projectModel.find({ userId: req.params.id })
-    res.status(200).json({
-        success: true,
-        allProjects
-    })
-})
+
+// module.exports.getProjects = catchAsyncError(async (req, res, next) => {
+//     const allProjects = await projectModel.find({ userId: req.params.id })
+//     res.status(200).json({
+//         success: true,
+//         allProjects
+//     })
+// })
+
 
 module.exports.getSingleProject = catchAsyncError(async (req, res, next) => {
     const project = await projectModel.findById(req.params.id)

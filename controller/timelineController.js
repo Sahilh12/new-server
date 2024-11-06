@@ -4,19 +4,26 @@ const timelineModel = require('../models/timelineSchema.js')
 
 
 module.exports.addTimeline = catchAsyncError(async (req, res, next) => {
-    const { title, description, from, to } = req.body
+    try {
+        const { title, description, from, to } = req.body
 
-    if (!title && !description && !from) {
+        console.log(from);
+
+
+        const timeline = await timelineModel.create({
+            userId: req.user,
+            title, description,
+            timeline: { from , to }
+        })
+        
+        res.status(200).json({
+            success: true,
+            message: "Timeline added successfully!",
+            timeline
+        })
+    } catch (error) {
         return next(new ErrorHandler('Please fill in all fields', 400))
     }
-
-
-    const timeline = await timelineModel.create({ userId: req.user, title, description, timeline: { from, to } })
-    res.status(200).json({
-        success: true,
-        message: "Timeline added successfully!",
-        timeline
-    })
 })
 
 module.exports.getAllTimeline = catchAsyncError(async (req, res, next) => {
@@ -30,7 +37,7 @@ module.exports.getTimelines = catchAsyncError(async (req, res, next) => {
 
 module.exports.updateTimeline = catchAsyncError(async (req, res, next) => {
     const { title, description, from, to } = req.body
-    if (!title || !description || !from ) {
+    if (!title || !description || !from) {
         return next(new ErrorHandler('Please fill in all fields', 400))
     }
     const timeline = await timelineModel.findByIdAndUpdate(req.params.id, {

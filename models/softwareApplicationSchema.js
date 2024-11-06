@@ -8,6 +8,7 @@ const softwareApplicationSchema = new mongoose.Schema({
 },
   name: {
     type: String,
+    trim:true,
     required: [true, "Application name is required"]
   },
   svg: {

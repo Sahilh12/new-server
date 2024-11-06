@@ -1,5 +1,5 @@
 const express = require('express')
-const { register, login, updateUser, logOut, getUserForPortfolio, forgotPassword, resetPassword, updatePassword, getUser } = require('../controller/userController')
+const { register, login, updateUser, logOut, getUserForPortfolio, forgotPassword, resetPassword, updatePassword, getUser, getAdminUserData } = require('../controller/userController')
 const { isAuthMiddleware } = require('../auth/authentication')
 const router = express.Router()
 const upload = require('../utils/multer')
@@ -20,6 +20,7 @@ router.put("/update/profile", isAuthMiddleware, upload.fields([
 ]), updateUser)
 
 router.put("/update/password", isAuthMiddleware, updatePassword)
+router.get('/admin/data' ,isAuthMiddleware, getAdminUserData)
 router.get("/me/portfolio/:id", getUserForPortfolio)
 router.post("/password/reset", forgotPassword)
 router.put("/password/reset/:token", resetPassword)

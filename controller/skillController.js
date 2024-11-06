@@ -1,11 +1,17 @@
 const skillModel = require('../models/skillSchema')
-const { catchAsyncError } = require('../middlewares/catchAsyncError') 
-const { ErrorHandler } = require('../middlewares/error')
+const { catchAsyncError } = require('../middlewares/catchAsyncError')
+const { ErrorHandler } = require('../middlewares/error') 
 
 module.exports.addSkill = catchAsyncError(async (req, res, next) => {
-    const { title, proficiency } = req.body
-     
- 
+    const { title, proficiency } = req.body 
+
+    if(!title){
+        next(new ErrorHandler('Title is required' , 400)) 
+    }
+    if(!proficiency){
+        next(new ErrorHandler('Proficiency is required' , 400)) 
+    }
+
     const skill = await skillModel.create({
         userId: req.user,
         title,
