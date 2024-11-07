@@ -4,25 +4,40 @@ const timelineModel = require('../models/timelineSchema.js')
 
 
 module.exports.addTimeline = catchAsyncError(async (req, res, next) => {
-    try {
-        const { title, description, from, to } = req.body
+    const { title, description, from } = req.body
+    const to = req.body.to ? req.body.to : new Date().toISOString().split("T")[0]
+    function isValidDateInRange(dateString) {
+        const date = new Date(dateString);
+        const startDate = new Date('1990-01-01');
+        const endDate = new Date(); // Current date
 
-        console.log(from);
+        return !isNaN(date.getTime()) && date >= startDate && date <= endDate;
+    }
 
+    if (isValidDateInRange(from) && isValidDateInRange(to)) {
+        // Ensure 'from' is not later than 'to'
+        if (new Date(from) <= new Date(to)) {
+            console.log('Date range is valid and within allowed range');
+            try {
+                const timeline = await timelineModel.create({
+                    userId: req.user,
+                    title, description,
+                    timeline: { from, to }
+                })
 
-        const timeline = await timelineModel.create({
-            userId: req.user,
-            title, description,
-            timeline: { from , to }
-        })
-        
-        res.status(200).json({
-            success: true,
-            message: "Timeline added successfully!",
-            timeline
-        })
-    } catch (error) {
-        return next(new ErrorHandler('Please fill in all fields', 400))
+                res.status(200).json({
+                    success: true,
+                    message: "Timeline added successfully!",
+                    timeline
+                })
+            } catch (error) {
+                return next(new ErrorHandler('Please fill in all fields', 400))
+            }
+        } else {
+            return next(new ErrorHandler('Invalid date range ', 400));
+        }
+    } else {
+        return next(new ErrorHandler('Invalid date range'))
     }
 })
 
