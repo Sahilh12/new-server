@@ -1,21 +1,27 @@
 const skillModel = require('../models/skillSchema')
 const { catchAsyncError } = require('../middlewares/catchAsyncError')
-const { ErrorHandler } = require('../middlewares/error') 
+const { ErrorHandler } = require('../middlewares/error')
 
 module.exports.addSkill = catchAsyncError(async (req, res, next) => {
-    const { title, proficiency } = req.body 
+    const { title, proficiency } = req.body
 
-    if(!title){
-        next(new ErrorHandler('Title is required' , 400)) 
+    if (!title) {
+        next(new ErrorHandler('Title is required', 400))
     }
-    if(!proficiency){
-        next(new ErrorHandler('Proficiency is required' , 400)) 
+    if (!proficiency) {
+        next(new ErrorHandler('Proficiency is required', 400))
+    }
+
+    const isExistSkill = await skillModel.findOne({ title })
+
+    if(isExistSkill){
+        next(new ErrorHandler('Skill already added'))
     }
 
     const skill = await skillModel.create({
         userId: req.user,
         title,
-        proficiency, 
+        proficiency,
     })
     res.status(201).json({ message: 'Skill added successfully', skill })
 
@@ -39,7 +45,7 @@ module.exports.updateSkill = catchAsyncError(async (req, res, next) => {
 })
 
 module.exports.getSkills = catchAsyncError(async (req, res, next) => {
-    const skills = await skillModel.find({ userId: req.user }) 
+    const skills = await skillModel.find({ userId: req.user })
     res.status(200).json({ status: true, skills })
 })
 
