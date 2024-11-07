@@ -26,7 +26,7 @@ const multer = require('./utils/multer.js')
 
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://stellar-trifle-64e4f2.netlify.app',
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     credentials: true
 }))
