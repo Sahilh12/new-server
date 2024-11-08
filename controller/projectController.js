@@ -100,13 +100,13 @@ module.exports.getAllProjects = catchAsyncError(async (req, res, next) => {
     })
 })
 
-// module.exports.getProjects = catchAsyncError(async (req, res, next) => {
-//     const allProjects = await projectModel.find({ userId: req.params.id })
-//     res.status(200).json({
-//         success: true,
-//         allProjects
-//     })
-// })
+module.exports.getProjects = catchAsyncError(async (req, res, next) => {
+    const allProjects = await projectModel.find({ userId: req.params.id })
+    res.status(200).json({
+        success: true,
+        allProjects
+    })
+})
 
 
 module.exports.getSingleProject = catchAsyncError(async (req, res, next) => {

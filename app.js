@@ -12,8 +12,10 @@ const timelineRouter = require('./router/timelineRoute.js')
 const softwareApplicationRouter = require('./router/softwareApplicationRoute.js')
 const projectRouter = require('./router/projectRoute.js')
 const skillRouter = require('./router/skillRoute.js')
-const path = require('path'); 
+const listRouter = require('./router/listRouter.js')
+const path = require('path');
 const multer = require('./utils/multer.js')
+const { catchAsyncError } = require('./middlewares/catchAsyncError.js')
 // const fileUpload = require('express-fileupload'); 
 
 
@@ -26,7 +28,7 @@ const multer = require('./utils/multer.js')
 
 
 app.use(cors({
-    origin: 'https://subtle-macaron-caf621.netlify.app',
+    origin: 'http://localhost:5173',
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     credentials: true
 }))
@@ -41,7 +43,7 @@ app.use("/api/v1/timeline", timelineRouter)
 app.use("/api/v1/application", softwareApplicationRouter)
 app.use("/api/v1/project", projectRouter)
 app.use("/api/v1/skill", skillRouter)
-
+app.use("/api/v1/list" , listRouter)
 
 
 app.use('/public/uploads', express.static(path.join(__dirname, 'public/uploads')));
