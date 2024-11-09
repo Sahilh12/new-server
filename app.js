@@ -28,7 +28,7 @@ const { catchAsyncError } = require('./middlewares/catchAsyncError.js')
 
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://grand-sawine-da01ef.netlify.app',
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     credentials: true
 }))
