@@ -195,7 +195,12 @@ module.exports.getUserForPortfolio = catchAsyncError(async (req, res, next) => {
     if (!user) {
         return next(new ErrorHandler("User not found", 404))
     }
-    res.status(200).json({ user })
+
+    const skills = await skillModel.find({ userId: req.params.id })
+    const projects = await projectModel.find({ userId: req.params.id })
+    const timeline = await timelineModel.find({ userId: req.params.id })
+
+    res.status(200).json({ user, skills, projects, timeline })
 })
 
 module.exports.forgotPassword = catchAsyncError(async (req, res, next) => {
@@ -207,7 +212,7 @@ module.exports.forgotPassword = catchAsyncError(async (req, res, next) => {
     }
     const resetToken = await user.getResetToken()
     await user.save({ validateBeforeSave: false })
-    const resetUrl = `https://statuesque-baklava-b98789.netlify.app/resetPassword/${resetToken}`
+    const resetUrl = `http://localhost:5173/resetPassword/${resetToken}`
     const message = `Your password reset link is :- \n\n ${resetUrl} \n\n if you've not request for this , ignore it.`
 
     try {
