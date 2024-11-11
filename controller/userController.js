@@ -99,18 +99,21 @@ module.exports.updateUser = catchAsyncError(async (req, res, next) => {
 
 
     const newData = {
-        fullName: req.body.fullName && req.body.fullName,
-        email: req.body.email && req.body.email,
-        phone: req.body.phone && req.body.phone,
-        aboutMe: req.body.aboutMe && req.body.aboutMe,
-        portfolioUrl: req.body.portfolioUrl && req.body.portfolioUrl,
-        githubUrl: req.body.githubUrl && req.body.githubUrl,
-        instagramUrl: req.body.instagramUrl && req.body.instagramUrl,
-        twitterUrl: req.body.twitterUrl && req.body.twitterUrl,
-        linkedInUrl: req.body.linkedInUrl && req.body.linkedInUrl,
-        avtar: req.files['avtar'] && req.files['avtar'][0].path,
-        resume: req.files['resume'] && req.files['resume'][0].path
+        fullName: req.body.fullName ? req.body.fullName : loggedInUser.fullName,
+        email: req.body.email ? req.body.email : loggedInUser.email,
+        phone: req.body.phone ? req.body.phone : loggedInUser.phone,
+        aboutMe: req.body.aboutMe ? req.body.aboutMe : loggedInUser.aboutMe,
+        portfolioUrl: req.body.portfolioUrl ? req.body.portfolioUrl : loggedInUser.portfolioUrl,
+        githubUrl: req.body.githubUrl ? req.body.githubUrl : loggedInUser.githubUrl,
+        instagramUrl: req.body.instagramUrl ? req.body.instagramUrl : loggedInUser.instagramUrl,
+        twitterUrl: req.body.twitterUrl ? req.body.twitterUrl : loggedInUser.twitterUrl,
+        linkedInUrl: req.body.linkedInUrl ? req.body.linkedInUrl : loggedInUser.linkedInUrl,
+        avtar: req.files['avtar'] ? req.files['avtar'][0].path : loggedInUser.avtar,
+        resume: req.files['resume'] ? req.files['resume'][0].path : loggedInUser.resume
     }
+
+    console.log(newData);
+
 
     const user = await userModel.findOneAndUpdate({ _id: req.user }, newData)
     res.status(200).json({
@@ -212,7 +215,7 @@ module.exports.forgotPassword = catchAsyncError(async (req, res, next) => {
     }
     const resetToken = await user.getResetToken()
     await user.save({ validateBeforeSave: false })
-    const resetUrl = `https://jovial-puffpuff-e46f2f.netlify.app/resetPassword/${resetToken}`
+    const resetUrl = `https://reliable-gumption-dbfa0f.netlify.app/resetPassword/${resetToken}`
     const message = `Your password reset link is :- \n\n ${resetUrl} \n\n if you've not request for this , ignore it.`
 
     try {

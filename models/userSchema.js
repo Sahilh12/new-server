@@ -14,7 +14,6 @@ const userSchema = mongoose.Schema({
         required: [true, "Email Required!"],
         unique: [true, "Already have an account with this email"],
         trim: true
-
     },
     phone: {
         type: Number,

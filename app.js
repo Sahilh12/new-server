@@ -9,13 +9,11 @@ const { errorMiddleware } = require('./middlewares/error.js')
 const messageRouter = require('./router/messageRoute.js')
 const userRouter = require('./router/userRouter.js')
 const timelineRouter = require('./router/timelineRoute.js')
-const softwareApplicationRouter = require('./router/softwareApplicationRoute.js')
 const projectRouter = require('./router/projectRoute.js')
 const skillRouter = require('./router/skillRoute.js')
 const listRouter = require('./router/listRouter.js')
-const path = require('path');
-const multer = require('./utils/multer.js')
-const { catchAsyncError } = require('./middlewares/catchAsyncError.js')
+const feedbackRouter = require('./router/feedbackRouter.js')
+const path = require('path'); 
 // const fileUpload = require('express-fileupload'); 
 
 
@@ -28,7 +26,7 @@ const { catchAsyncError } = require('./middlewares/catchAsyncError.js')
 
 
 app.use(cors({
-    origin: 'https://jovial-puffpuff-e46f2f.netlify.app',
+    origin: 'https://reliable-gumption-dbfa0f.netlify.app',
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     credentials: true
 }))
@@ -40,10 +38,11 @@ app.use(express.urlencoded({ extended: true }))
 app.use("/api/v1/message", messageRouter)
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/timeline", timelineRouter)
-app.use("/api/v1/application", softwareApplicationRouter)
+// app.use("/api/v1/application", softwareApplicationRouter)
 app.use("/api/v1/project", projectRouter)
 app.use("/api/v1/skill", skillRouter)
-app.use("/api/v1/list" , listRouter)
+app.use("/api/v1/list", listRouter)
+app.use("/api/v1/feedback", feedbackRouter)
 
 
 app.use('/public/uploads', express.static(path.join(__dirname, 'public/uploads')));
