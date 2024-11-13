@@ -55,6 +55,39 @@ module.exports.updateTimeline = catchAsyncError(async (req, res, next) => {
     if (!title || !description || !from) {
         return next(new ErrorHandler('Please fill in all fields', 400))
     }
+    function isValidDateInRange(dateString) {
+        const date = new Date(dateString);
+        const startDate = new Date('1990-01-01');
+        const endDate = new Date(); // Current date
+
+        return !isNaN(date.getTime()) && date >= startDate && date <= endDate;
+    }
+
+    if (isValidDateInRange(from) && isValidDateInRange(to)) {
+        // Ensure 'from' is not later than 'to'
+        if (new Date(from) <= new Date(to)) {
+            console.log('Date range is valid and within allowed range');
+            try {
+                const timeline = await timelineModel.create({
+                    userId: req.user,
+                    title, description,
+                    timeline: { from, to }
+                })
+
+                res.status(200).json({
+                    success: true,
+                    message: "Timeline added successfully!",
+                    timeline
+                })
+            } catch (error) {
+                return next(new ErrorHandler('Please fill in all fields', 400))
+            }
+        } else {
+            return next(new ErrorHandler('Invalid date range ', 400));
+        }
+    } else {
+        return next(new ErrorHandler('Invalid date range'))
+    }
     const timeline = await timelineModel.findByIdAndUpdate(req.params.id, {
         title, description, timeline: {
             from,

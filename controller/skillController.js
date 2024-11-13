@@ -6,16 +6,16 @@ module.exports.addSkill = catchAsyncError(async (req, res, next) => {
     const { title, proficiency } = req.body
 
     if (!title) {
-        next(new ErrorHandler('Title is required', 400))
+        return next(new ErrorHandler('Title is required', 400))
     }
     if (!proficiency) {
-        next(new ErrorHandler('Proficiency is required', 400))
+        return next(new ErrorHandler('Proficiency is required', 400))
     }
 
     const isExistSkill = await skillModel.findOne({ title })
 
-    if(isExistSkill){
-        next(new ErrorHandler('Skill already added'))
+    if (isExistSkill) {
+        return next(new ErrorHandler('Skill already added'))
     }
 
     const skill = await skillModel.create({
@@ -32,6 +32,8 @@ module.exports.updateSkill = catchAsyncError(async (req, res, next) => {
         title: req.body.title,
         proficiency: req.body.proficiency
     }
+
+    console.log(newSkill);
 
     const updatedSkill = await skillModel.findByIdAndUpdate(req.params.id, newSkill, {
         new: true,

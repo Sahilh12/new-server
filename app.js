@@ -26,7 +26,7 @@ const path = require('path');
 
 
 app.use(cors({
-    origin: 'https://reliable-gumption-dbfa0f.netlify.app',
+    origin: 'https://dashing-pithivier-ca34e6.netlify.app',
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     credentials: true
 }))

@@ -49,47 +49,44 @@ module.exports.addProject = catchAsyncError(async (req, res, next) => {
 })
 
 module.exports.updateProject = catchAsyncError(async (req, res, next) => {
+    try {
+        const { title, description, deployed, stack, technologies, gitRepoLink, projectLink, deletedImages } = req.body;
 
-    const filePath = req.files.map((file) => file.path)
-    // console.log(filePath);
+        if (!title || !projectLink) {
+            return next(new ErrorHandler("Please fill form properly ", 400))
+        }
 
-    const project = await projectModel.findById(req.params.id)
+        const project = await projectModel.findById(req.params.id);
 
-    if (project.projectBanner.length <= 0) {
-        return next(new ErrorHandler("Project Banner is Required! ", 400))
+        // Update text fields if provided
+        if (title) project.title = title;
+        if (description) project.description = description;
+        if (deployed) project.deployed = deployed;
+        if (stack) project.stack = stack;
+        if (technologies) project.technologies = technologies;
+        if (gitRepoLink) project.gitRepoLink = gitRepoLink;
+        if (projectLink) project.projectLink = projectLink;
+
+        if (deletedImages) {
+            const deletedImagePaths = (Array.isArray(deletedImages) ? deletedImages : [deletedImages]).map((url) => url.replace("https://new-server-e0l5.onrender.com/", ""));
+            project.projectBanner = project.projectBanner.filter((path, i) => !deletedImagePaths.includes(path))
+        }
+
+        if (req.files && req.files.length > 0) {
+            const newImages = req.files.map((file) => file.path);
+            console.log('newImages : ', newImages);
+            project.projectBanner = [...project.projectBanner, ...newImages];
+        }
+
+        if (project.projectBanner.length <= 0) {
+            return next(new ErrorHandler("Please upload at least one banner image", 400))
+        }
+
+        await project.save();
+        res.status(200).json({ message: 'Project updated successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating project', error });
     }
-
-    if (req.files.length > 0) {
-        project.projectBanner.forEach((singlePath, i) => {
-            const oldImagePath = path.join(`D:/Portfolio/MERN/New folder/New folder/server/${singlePath}`)
-            if (fs.existsSync(oldImagePath)) {
-                fs.unlinkSync(oldImagePath)
-                console.log('old project image deleted');
-            }
-        })
-    }
-
-    const newData = {
-        title: req.body.title,
-        description: req.body.description,
-        gitRepoLink: req.body.gitRepoLink,
-        projectLink: req.body.projectLink,
-        technologies: req.body.technologies,
-        stack: req.body.stack,
-        deployed: req.body.deployed,
-        projectBanner: filePath.length > 0 ? filePath : req.body.projectBanner
-    }
-
-    const updatedProject = await projectModel.findByIdAndUpdate(req.params.id, newData, {
-        new: true,
-        runValidators: true
-    })
-    res.status(200).json({
-        success: true,
-        message: "Project Updated!",
-        updatedProject
-    })
-
 })
 
 module.exports.getAllProjects = catchAsyncError(async (req, res, next) => {

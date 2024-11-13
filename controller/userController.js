@@ -75,45 +75,65 @@ module.exports.login = catchAsyncError(async (req, res, next) => {
 })
 
 module.exports.updateUser = catchAsyncError(async (req, res, next) => {
+    const { fullName,
+        email,
+        phone,
+        password,
+        githubUrl,
+        aboutMe,
+        portfolioUrl,
+        instagramUrl,
+        twitterUrl,
+        linkedInUrl } = req.body
 
     const loggedInUser = await userModel.findById(req.user)
 
-    if (req.files['avtar']) {
-        if (loggedInUser.avtar) {
-            const oldImagePath = path.join(`D:/Portfolio/MERN/New folder/New folder/server/${loggedInUser.avtar}`);
-            if (fs.existsSync(oldImagePath)) {
-                fs.unlinkSync(oldImagePath);
-                console.log('avtar deleted : ', oldImagePath);
-            }
-        }
+    console.log(fullName,
+        email,
+        phone,
+        githubUrl);
+
+
+    if (!fullName.trim() ||
+        !email.trim() ||
+        !phone.trim() ||
+        !githubUrl.trim()) {
+        return next(new ErrorHandler("Please fill necessary fields", 400))
     }
-    if (req.files['resume']) {
-        if (loggedInUser.resume) {
-            const oldImagePath = path.join(`D:/Portfolio/MERN/New folder/New folder/server/${loggedInUser.resume}`);
-            if (fs.existsSync(oldImagePath)) {
-                fs.unlinkSync(oldImagePath);
-                console.log('resume deleted : ', oldImagePath);
-            }
-        }
-    }
+
+    // if (req.files['avtar']) {
+    //     if (loggedInUser.avtar) {
+    //         const oldImagePath = path.join(`D:/Portfolio/MERN/New folder/New folder/server/${loggedInUser.avtar}`);
+    //         if (fs.existsSync(oldImagePath)) {
+    //             fs.unlinkSync(oldImagePath);
+    //             console.log('avtar deleted : ', oldImagePath);
+    //         }
+    //     }
+    // }
+    // if (req.files['resume']) {
+    //     if (loggedInUser.resume) {
+    //         const oldImagePath = path.join(`D:/Portfolio/MERN/New folder/New folder/server/${loggedInUser.resume}`);
+    //         if (fs.existsSync(oldImagePath)) {
+    //             fs.unlinkSync(oldImagePath);
+    //             console.log('resume deleted : ', oldImagePath);
+    //         }
+    //     }
+    // }
 
 
     const newData = {
-        fullName: req.body.fullName ? req.body.fullName : loggedInUser.fullName,
-        email: req.body.email ? req.body.email : loggedInUser.email,
-        phone: req.body.phone ? req.body.phone : loggedInUser.phone,
-        aboutMe: req.body.aboutMe ? req.body.aboutMe : loggedInUser.aboutMe,
-        portfolioUrl: req.body.portfolioUrl ? req.body.portfolioUrl : loggedInUser.portfolioUrl,
-        githubUrl: req.body.githubUrl ? req.body.githubUrl : loggedInUser.githubUrl,
-        instagramUrl: req.body.instagramUrl ? req.body.instagramUrl : loggedInUser.instagramUrl,
-        twitterUrl: req.body.twitterUrl ? req.body.twitterUrl : loggedInUser.twitterUrl,
-        linkedInUrl: req.body.linkedInUrl ? req.body.linkedInUrl : loggedInUser.linkedInUrl,
+        fullName: fullName ? fullName : loggedInUser.fullName,
+        email: email ? email : loggedInUser.email,
+        phone: phone ? phone : loggedInUser.phone,
+        aboutMe: aboutMe ? aboutMe : loggedInUser.aboutMe,
+        portfolioUrl: portfolioUrl ? portfolioUrl : loggedInUser.portfolioUrl,
+        githubUrl: githubUrl ? githubUrl : loggedInUser.githubUrl,
+        instagramUrl: instagramUrl ? instagramUrl : loggedInUser.instagramUrl,
+        twitterUrl: twitterUrl ? twitterUrl : loggedInUser.twitterUrl,
+        linkedInUrl: linkedInUrl ? linkedInUrl : loggedInUser.linkedInUrl,
         avtar: req.files['avtar'] ? req.files['avtar'][0].path : loggedInUser.avtar,
         resume: req.files['resume'] ? req.files['resume'][0].path : loggedInUser.resume
     }
-
-    console.log(newData);
-
 
     const user = await userModel.findOneAndUpdate({ _id: req.user }, newData)
     res.status(200).json({
@@ -215,7 +235,7 @@ module.exports.forgotPassword = catchAsyncError(async (req, res, next) => {
     }
     const resetToken = await user.getResetToken()
     await user.save({ validateBeforeSave: false })
-    const resetUrl = `https://reliable-gumption-dbfa0f.netlify.app/resetPassword/${resetToken}`
+    const resetUrl = `https://dashing-pithivier-ca34e6.netlify.app/resetPassword/${resetToken}`
     const message = `Your password reset link is :- \n\n ${resetUrl} \n\n if you've not request for this , ignore it.`
 
     try {
