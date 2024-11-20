@@ -229,7 +229,7 @@ module.exports.forgotPassword = catchAsyncError(async (req, res, next) => {
     }
     const resetToken = await user.getResetToken()
     await user.save({ validateBeforeSave: false })
-    const resetUrl = `https://jade-marigold-c5526d.netlify.app/resetPassword/${resetToken}`
+    const resetUrl = `https://super-sprite-70581c.netlify.app/resetPassword/${resetToken}`
     const message = `Your password reset link is :- \n\n ${resetUrl} \n\n if you've not request for this , ignore it.`
 
     try {
