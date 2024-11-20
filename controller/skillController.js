@@ -31,10 +31,7 @@ module.exports.updateSkill = catchAsyncError(async (req, res, next) => {
     const newSkill = {
         title: req.body.title,
         proficiency: req.body.proficiency
-    }
-
-    console.log(newSkill);
-
+    } 
     const updatedSkill = await skillModel.findByIdAndUpdate(req.params.id, newSkill, {
         new: true,
     })

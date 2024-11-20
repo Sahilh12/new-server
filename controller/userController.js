@@ -86,13 +86,7 @@ module.exports.updateUser = catchAsyncError(async (req, res, next) => {
         twitterUrl,
         linkedInUrl } = req.body
 
-    const loggedInUser = await userModel.findById(req.user)
-
-    console.log(fullName,
-        email,
-        phone,
-        githubUrl);
-
+    const loggedInUser = await userModel.findById(req.user) 
 
     if (!fullName.trim() ||
         !email.trim() ||
@@ -235,7 +229,7 @@ module.exports.forgotPassword = catchAsyncError(async (req, res, next) => {
     }
     const resetToken = await user.getResetToken()
     await user.save({ validateBeforeSave: false })
-    const resetUrl = `https://dashing-pithivier-ca34e6.netlify.app/resetPassword/${resetToken}`
+    const resetUrl = `http://localhost:5173/resetPassword/${resetToken}`
     const message = `Your password reset link is :- \n\n ${resetUrl} \n\n if you've not request for this , ignore it.`
 
     try {

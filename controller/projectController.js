@@ -73,8 +73,7 @@ module.exports.updateProject = catchAsyncError(async (req, res, next) => {
         }
 
         if (req.files && req.files.length > 0) {
-            const newImages = req.files.map((file) => file.path);
-            console.log('newImages : ', newImages);
+            const newImages = req.files.map((file) => file.path); 
             project.projectBanner = [...project.projectBanner, ...newImages];
         }
 

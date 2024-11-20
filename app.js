@@ -14,19 +14,18 @@ const skillRouter = require('./router/skillRoute.js')
 const listRouter = require('./router/listRouter.js')
 const feedbackRouter = require('./router/feedbackRouter.js')
 const path = require('path'); 
+const paymentRouter = require('./router/paymentRouter.js')
 // const fileUpload = require('express-fileupload'); 
 
 
 // app.use(fileUpload({
 //     useTempFiles: true,
 //     tempFileDir: '/tmp/', // Specify a temporary directory if needed
-//   }));
-
-
+//   })); 
 
 
 app.use(cors({
-    origin: 'https://dashing-pithivier-ca34e6.netlify.app',
+    origin: 'http://localhost:5173',
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     credentials: true
 }))
@@ -35,6 +34,7 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+app.use('/api/payment', paymentRouter);
 app.use("/api/v1/message", messageRouter)
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/timeline", timelineRouter)

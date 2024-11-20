@@ -16,8 +16,7 @@ module.exports.addTimeline = catchAsyncError(async (req, res, next) => {
 
     if (isValidDateInRange(from) && isValidDateInRange(to)) {
         // Ensure 'from' is not later than 'to'
-        if (new Date(from) <= new Date(to)) {
-            console.log('Date range is valid and within allowed range');
+        if (new Date(from) <= new Date(to)) { 
             try {
                 const timeline = await timelineModel.create({
                     userId: req.user,
@@ -65,8 +64,7 @@ module.exports.updateTimeline = catchAsyncError(async (req, res, next) => {
 
     if (isValidDateInRange(from) && isValidDateInRange(to)) {
         // Ensure 'from' is not later than 'to'
-        if (new Date(from) <= new Date(to)) {
-            console.log('Date range is valid and within allowed range');
+        if (new Date(from) <= new Date(to)) { 
             try {
                 const timeline = await timelineModel.create({
                     userId: req.user,
