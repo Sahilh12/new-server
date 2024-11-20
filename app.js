@@ -25,7 +25,7 @@ const paymentRouter = require('./router/paymentRouter.js')
 
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://roaring-syrniki-5b6dc2.netlify.app',
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     credentials: true
 }))
