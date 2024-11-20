@@ -44,9 +44,6 @@ const userSchema = mongoose.Schema({
         required: [true, "Github URL Required"],
         trim: true
     },
-    instagramUrl: String,
-    facebookUrl: String,
-    twitterUrl: String,
     linkedInUrl: String,
     resetPasswordToken: String,
     resetPasswordExpired: Date,

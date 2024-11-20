@@ -17,6 +17,8 @@ const fs = require('fs')
 
 module.exports.register = catchAsyncError(async (req, res, next) => {
 
+    console.log(req.body);
+
     if (!req.files) {
         return next(new ErrorHandler("Avtar and Resume are Required! ", 400))
     }
@@ -44,6 +46,9 @@ module.exports.register = catchAsyncError(async (req, res, next) => {
         phone,
         password,
         githubUrl,
+        aboutMe: req.body.aboutMe ? req.body.aboutMe : '',
+        portfolioUrl: req.body.portfolioUrl ? req.body.portfolioUrl : '',
+        linkedInUrl: req.body.linkedInUrl ? req.body.linkedInUrl : '',
         avtar: avatarFile,
         resume: resumeFile
     })
@@ -75,18 +80,18 @@ module.exports.login = catchAsyncError(async (req, res, next) => {
 })
 
 module.exports.updateUser = catchAsyncError(async (req, res, next) => {
+
+    console.log(req.body);
+
     const { fullName,
         email,
         phone,
-        password,
         githubUrl,
         aboutMe,
         portfolioUrl,
-        instagramUrl,
-        twitterUrl,
         linkedInUrl } = req.body
 
-    const loggedInUser = await userModel.findById(req.user) 
+    const loggedInUser = await userModel.findById(req.user)
 
     if (!fullName.trim() ||
         !email.trim() ||
@@ -116,15 +121,13 @@ module.exports.updateUser = catchAsyncError(async (req, res, next) => {
 
 
     const newData = {
-        fullName: fullName ? fullName : loggedInUser.fullName,
-        email: email ? email : loggedInUser.email,
-        phone: phone ? phone : loggedInUser.phone,
-        aboutMe: aboutMe ? aboutMe : loggedInUser.aboutMe,
-        portfolioUrl: portfolioUrl ? portfolioUrl : loggedInUser.portfolioUrl,
-        githubUrl: githubUrl ? githubUrl : loggedInUser.githubUrl,
-        instagramUrl: instagramUrl ? instagramUrl : loggedInUser.instagramUrl,
-        twitterUrl: twitterUrl ? twitterUrl : loggedInUser.twitterUrl,
-        linkedInUrl: linkedInUrl ? linkedInUrl : loggedInUser.linkedInUrl,
+        fullName: fullName,
+        email: email,
+        phone: phone,
+        aboutMe: aboutMe.trim() === "undefined" ? "" : aboutMe,
+        portfolioUrl: portfolioUrl.trim() === "undefined" ? "" : portfolioUrl,
+        githubUrl: githubUrl,
+        linkedInUrl: linkedInUrl.trim() === "undefined" ? "" : linkedInUrl,
         avtar: req.files['avtar'] ? req.files['avtar'][0].path : loggedInUser.avtar,
         resume: req.files['resume'] ? req.files['resume'][0].path : loggedInUser.resume
     }
@@ -229,7 +232,7 @@ module.exports.forgotPassword = catchAsyncError(async (req, res, next) => {
     }
     const resetToken = await user.getResetToken()
     await user.save({ validateBeforeSave: false })
-    const resetUrl = `https://super-sprite-70581c.netlify.app/resetPassword/${resetToken}`
+    const resetUrl = `https://jocular-lolly-55127e.netlify.app/resetPassword/${resetToken}`
     const message = `Your password reset link is :- \n\n ${resetUrl} \n\n if you've not request for this , ignore it.`
 
     try {
