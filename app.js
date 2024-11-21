@@ -25,7 +25,7 @@ const paymentRouter = require('./router/paymentRouter.js')
 
 
 app.use(cors({
-    origin: 'https://jocular-lolly-55127e.netlify.app',
+    origin: 'https://chimerical-choux-7fe348.netlify.app',
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     credentials: true
 }))
