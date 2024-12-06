@@ -13,19 +13,11 @@ const projectRouter = require('./router/projectRoute.js')
 const skillRouter = require('./router/skillRoute.js')
 const listRouter = require('./router/listRouter.js')
 const feedbackRouter = require('./router/feedbackRouter.js')
-const path = require('path'); 
+const path = require('path');
 const paymentRouter = require('./router/paymentRouter.js')
-// const fileUpload = require('express-fileupload'); 
-
-
-// app.use(fileUpload({
-//     useTempFiles: true,
-//     tempFileDir: '/tmp/', // Specify a temporary directory if needed
-//   })); 
-
 
 app.use(cors({
-    origin: 'https://chimerical-choux-7fe348.netlify.app',
+    origin: 'https://portfolio-1212.netlify.app',
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     credentials: true
 }))
